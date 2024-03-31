@@ -40,20 +40,21 @@ async fn main() -> Result<()> {
         }
 
         let body = content.msgtype.body();
+        let count_entity = spam_count_map.get_or_insert(sender.to_string(), AtomicUsize::new(0));
         if config.spam_keywords.iter().any(|key| body.contains(key)) {
-            spam_count_map
-                .get_or_insert(sender.to_string(), AtomicUsize::new(1))
+            count_entity
                 .value()
                 .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
         } else {
-            spam_count_map.insert(sender.to_string(), AtomicUsize::new(1));
+            count_entity
+                .value()
+                .store(0, std::sync::atomic::Ordering::Release);
         }
 
-        if spam_count_map
-            .get_or_insert(sender.to_string(), AtomicUsize::new(1))
+        if count_entity
             .value()
             .load(std::sync::atomic::Ordering::Acquire)
-            > config.spam_limit as _
+            >= config.spam_limit as _
         {
             // TODO: actually auto ban
             println!("ban {sender}");
