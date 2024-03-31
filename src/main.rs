@@ -22,6 +22,10 @@ use anyhow::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
+    if fs::File::open("config.toml").is_err() {
+        println!("'config.toml' not exists, generating template...");
+        fs::write("config.toml", toml::to_string_pretty(&Config::default())?)?;
+    }
     let config: Arc<Config> = Arc::new(toml::from_str(&fs::read_to_string("config.toml")?)?);
     let spam_count_map: Arc<SkipMap<String, AtomicUsize>> = Arc::new(SkipMap::new());
 
@@ -82,10 +86,18 @@ async fn build_client(config: &Config) -> Result<Client> {
         client = client.proxy(proxy);
     }
     let client = client.build().await?;
-    client
-        .matrix_auth()
-        .login_username(userid, &config.password)
-        .await?;
+    match &config.auth {
+        config::Auth::Password { password } => {
+            client
+                .matrix_auth()
+                .login_username(userid, password)
+                .initial_device_display_name(PACKAGE_NAME)
+                .await?;
+        }
+        config::Auth::SSO => todo!("SSO login was not implemented yet"),
+    }
 
     Ok(client)
 }
+
+const PACKAGE_NAME: &str = env!("CARGO_PKG_NAME");
