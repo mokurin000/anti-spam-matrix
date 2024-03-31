@@ -24,8 +24,9 @@ async fn main() -> Result<()> {
     let config: Arc<Config> = Arc::new(toml::from_str(&fs::read_to_string("config.toml")?)?);
     let spam_count_map: Arc<SkipMap<String, AtomicUsize>> = Arc::new(SkipMap::new());
 
-    let client = build_client(&config).await?;
+    let client = Arc::new(build_client(&config).await?);
 
+    let _client = client.clone();
     client.add_event_handler(|ev: SyncRoomMessageEvent| async move {
         let SyncMessageLikeEvent::Original(ev) = ev else {
             return;
@@ -56,8 +57,14 @@ async fn main() -> Result<()> {
             .load(std::sync::atomic::Ordering::Acquire)
             >= config.spam_limit as _
         {
-            // TODO: actually auto ban
-            println!("ban {sender}");
+            for room in _client.joined_rooms() {
+                if let Err(e) = room.ban_user(&sender, Some("Spam")).await {
+                    println!(
+                        "Sorry, I cannot ban {sender} from {}: {e}",
+                        room.name().as_deref().unwrap_or("Unknown")
+                    );
+                }
+            }
         }
     });
 
