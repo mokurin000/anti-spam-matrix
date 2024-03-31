@@ -14,7 +14,7 @@ use matrix_sdk::{
 };
 use regex::RegexSet;
 use std::{
-    fs,
+    fs, process,
     sync::{atomic::AtomicUsize, Arc},
 };
 
@@ -25,6 +25,7 @@ async fn main() -> Result<()> {
     if fs::File::open("config.toml").is_err() {
         println!("'config.toml' not exists, generating template...");
         fs::write("config.toml", toml::to_string_pretty(&Config::default())?)?;
+        process::exit(1);
     }
     let config: Arc<Config> = Arc::new(toml::from_str(&fs::read_to_string("config.toml")?)?);
     let spam_count_map: Arc<SkipMap<String, AtomicUsize>> = Arc::new(SkipMap::new());
