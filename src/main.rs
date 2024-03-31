@@ -4,13 +4,14 @@ use config::Config;
 use crossbeam_skiplist::SkipMap;
 use matrix_sdk::{
     config::SyncSettings,
+    matrix_auth::{MatrixSession, MatrixSessionTokens},
     ruma::{
         events::{
             room::message::SyncRoomMessageEvent, OriginalSyncMessageLikeEvent, SyncMessageLikeEvent,
         },
         UserId,
     },
-    Client,
+    Client, SessionMeta,
 };
 use regex::RegexSet;
 use std::{
@@ -95,10 +96,45 @@ async fn build_client(config: &Config) -> Result<Client> {
                 .initial_device_display_name(PACKAGE_NAME)
                 .await?;
         }
-        config::Auth::SSO => todo!("SSO login was not implemented yet"),
+        config::Auth::SSO => {
+            sso_login(&client).await?;
+        }
     }
 
     Ok(client)
+}
+
+async fn sso_login(client: &Client) -> Result<()> {
+    if let Ok(auth) = fs::read_to_string("auth.json") {
+        let session: MatrixSession = serde_json::from_str(&auth)?;
+        if client.restore_session(session).await.is_ok() {
+            return Ok(());
+        }
+    }
+
+    let auth_resp = client
+        .matrix_auth()
+        .login_sso(|sso| async move {
+            println!("trying to open {sso} from default browser...");
+            println!("If this doesn't work, please access the URL above manually.");
+            open::that(&sso)?;
+            Ok(())
+        })
+        .initial_device_display_name(PACKAGE_NAME)
+        .await?;
+
+    let session = MatrixSession {
+        meta: SessionMeta {
+            user_id: auth_resp.user_id,
+            device_id: auth_resp.device_id,
+        },
+        tokens: MatrixSessionTokens {
+            access_token: auth_resp.access_token,
+            refresh_token: auth_resp.refresh_token,
+        },
+    };
+    fs::write("auth.json", serde_json::to_string_pretty(&session)?)?;
+    Ok(())
 }
 
 const PACKAGE_NAME: &str = env!("CARGO_PKG_NAME");
