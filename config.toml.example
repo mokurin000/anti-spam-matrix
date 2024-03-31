@@ -1,0 +1,8 @@
+username = "@alice:example.org"
+password = "verYOarDPassWorD"
+
+spam_limit = 3
+spam_keywords = ["今天少年"]
+
+# optional
+http_proxy = "http://127.0.0.1:11451"
