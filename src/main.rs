@@ -55,6 +55,7 @@ async fn main() -> Result<()> {
             .load(std::sync::atomic::Ordering::Acquire)
             > config.spam_limit as _
         {
+            // TODO: actually auto ban
             println!("ban {sender}");
         }
     });
