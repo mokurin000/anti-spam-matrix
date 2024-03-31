@@ -6,7 +6,7 @@ pub struct Config {
     pub password: String,
 
     pub spam_limit: u32,
-    pub spam_keywords: Vec<String>,
-    
+    pub spam_regex_exprs: Vec<String>,
+
     pub http_proxy: Option<String>,
 }

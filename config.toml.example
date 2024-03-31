@@ -2,7 +2,7 @@ username = "@alice:example.org"
 password = "verYOarDPassWorD"
 
 spam_limit = 3
-spam_keywords = ["典", "孝", "急", "乐", "蚌", "赢"]
+spam_regex_exprs = ["^典$", "^孝$", "^急$", "^乐$", "^蚌$", "^赢$"]
 
 # optional
 http_proxy = "http://127.0.0.1:11451"

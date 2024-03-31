@@ -12,6 +12,7 @@ use matrix_sdk::{
     },
     Client,
 };
+use regex::RegexSet;
 use std::{
     fs,
     sync::{atomic::AtomicUsize, Arc},
@@ -27,6 +28,7 @@ async fn main() -> Result<()> {
     let client = Arc::new(build_client(&config).await?);
 
     let _client = client.clone();
+    let regex_set = RegexSet::new(&config.spam_regex_exprs)?;
     client.add_event_handler(|ev: SyncRoomMessageEvent| async move {
         let SyncMessageLikeEvent::Original(ev) = ev else {
             return;
@@ -42,7 +44,7 @@ async fn main() -> Result<()> {
 
         let body = content.msgtype.body();
         let count_entity = spam_count_map.get_or_insert(sender.to_string(), AtomicUsize::new(0));
-        if config.spam_keywords.iter().any(|key| body.contains(key)) {
+        if regex_set.is_match(body) {
             count_entity
                 .value()
                 .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
