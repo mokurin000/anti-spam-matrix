@@ -12,6 +12,8 @@ The bot will ban the spammer in all rooms where it has permissions.
 
 ## Usage
 
+### Authorization
+
 Currently we support two authurization methods, `sso` and `password`
 
 ```toml
@@ -25,4 +27,14 @@ password = "VeryHardPassword"
 ```toml
 [auth]
 type = "sso_login"
+```
+
+### Setup a proxy
+
+```toml
+proxy = "socks5://114.51.41.191:9810"
+```
+or
+```toml
+proxy = "http://name:passwd@114.51.41.191:9810"
 ```
