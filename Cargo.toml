@@ -24,6 +24,13 @@ toml = "0.8.12"
 regex = "1.10.4"
 open = "5.1.2"
 
+[features]
+default = ["native-tls", "socks"]
+native-tls = ["matrix-sdk/native-tls"]
+rustls-tls = ["matrix-sdk/rustls-tls"]
+# required to support socks5 proxy
+socks = ["matrix-sdk/socks"]
+
 [profile.release]
 panic = "abort"
 lto = true
