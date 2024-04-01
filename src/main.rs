@@ -82,7 +82,11 @@ async fn main() -> Result<()> {
                 if let Err(e) = room.ban_user(&sender, Some("Spam")).await {
                     println!(
                         "Sorry, I cannot ban {sender} from {}: {e}",
-                        room.name().as_deref().unwrap_or("Unknown")
+                        room.name()
+                            .as_deref()
+                            .map(str::to_string)
+                            .or_else(|| room.alt_aliases().first().map(|a| a.alias().to_string()))
+                            .unwrap_or("Unknown".into())
                     );
                 }
             }
