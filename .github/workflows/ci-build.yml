@@ -19,22 +19,22 @@ jobs:
           - platform: macos-x86_64
             target: x86_64-apple-darwin
             os: macos-latest
-            bin: petpet
+            bin: anti-spam-matrix
         
           - platform: macos-arm64
             target: aarch64-apple-darwin
             os: macos-latest
-            bin: petpet
+            bin: anti-spam-matrix
 
           - platform: linux_glibc-x86_64
             target: x86_64-unknown-linux-gnu
             os: ubuntu-latest
-            bin: petpet
+            bin: anti-spam-matrix
             
           - platform: windows-x86_64
             target: x86_64-pc-windows-msvc
             os: windows-latest
-            bin: petpet.exe
+            bin: anti-spam-matrix.exe
             
     steps:
       - name: Checkout code
