@@ -25,9 +25,10 @@ use anyhow::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let project_dir = directories::ProjectDirs::from("io", "poly000", "anti-spam-bot")
+    let project_dir = directories::ProjectDirs::from("io", "poly000", PACKAGE_NAME)
         .map(|d| d.config_dir().to_owned())
         .unwrap_or_else(|| PathBuf::from("."));
+    fs::create_dir_all(&project_dir)?;
     let config_path = project_dir.join("config.toml");
     let auth_path = project_dir.join("auth.json");
 
