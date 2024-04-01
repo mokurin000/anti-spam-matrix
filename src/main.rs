@@ -1,17 +1,20 @@
 mod config;
 use config::Config;
+mod auth;
+use auth::{password_login, sso_login};
+mod utils;
+use utils::ban_user_in_room;
 
 use crossbeam_skiplist::SkipMap;
 use matrix_sdk::{
     config::SyncSettings,
-    matrix_auth::{MatrixSession, MatrixSessionTokens},
     ruma::{
         events::{
             room::message::SyncRoomMessageEvent, OriginalSyncMessageLikeEvent, SyncMessageLikeEvent,
         },
         UserId,
     },
-    Client, SessionMeta,
+    Client,
 };
 use regex::RegexSet;
 use std::{
@@ -79,16 +82,7 @@ async fn main() -> Result<()> {
             >= config.spam_limit as _
         {
             for room in _client.joined_rooms() {
-                if let Err(e) = room.ban_user(&sender, Some("Spam")).await {
-                    println!(
-                        "Sorry, I cannot ban {sender} from {}: {e}",
-                        room.name()
-                            .as_deref()
-                            .map(str::to_string)
-                            .or_else(|| room.alt_aliases().first().map(|a| a.alias().to_string()))
-                            .unwrap_or("Unknown".into())
-                    );
-                }
+                ban_user_in_room(&room, &sender).await;
             }
         }
     });
@@ -107,11 +101,7 @@ async fn build_client(config: &Config, auth_path: &PathBuf) -> Result<Client> {
     let client = client.build().await?;
     match &config.auth {
         config::Auth::Password { password } => {
-            client
-                .matrix_auth()
-                .login_username(userid, password)
-                .initial_device_display_name(PACKAGE_NAME)
-                .await?;
+            password_login(&client, &userid, &password).await?;
         }
         config::Auth::SSO => {
             sso_login(&client, &auth_path).await?;
@@ -119,39 +109,6 @@ async fn build_client(config: &Config, auth_path: &PathBuf) -> Result<Client> {
     }
 
     Ok(client)
-}
-
-async fn sso_login(client: &Client, auth_path: &PathBuf) -> Result<()> {
-    if let Ok(auth) = fs::read_to_string(&auth_path) {
-        let session: MatrixSession = serde_json::from_str(&auth)?;
-        if client.restore_session(session).await.is_ok() {
-            return Ok(());
-        }
-    }
-
-    let auth_resp = client
-        .matrix_auth()
-        .login_sso(|sso| async move {
-            println!("trying to open {sso} from default browser...");
-            println!("If this doesn't work, please access the URL above manually.");
-            open::that(&sso)?;
-            Ok(())
-        })
-        .initial_device_display_name(PACKAGE_NAME)
-        .await?;
-
-    let session = MatrixSession {
-        meta: SessionMeta {
-            user_id: auth_resp.user_id,
-            device_id: auth_resp.device_id,
-        },
-        tokens: MatrixSessionTokens {
-            access_token: auth_resp.access_token,
-            refresh_token: auth_resp.refresh_token,
-        },
-    };
-    fs::write(&auth_path, serde_json::to_string_pretty(&session)?)?;
-    Ok(())
 }
 
 const PACKAGE_NAME: &str = env!("CARGO_PKG_NAME");
