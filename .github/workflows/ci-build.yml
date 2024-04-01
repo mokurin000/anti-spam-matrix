@@ -61,7 +61,6 @@ jobs:
         if: matrix.os == 'ubuntu-latest'
         run: |
             sudo apt-get update
-            sudo apt-get upgrade
             sudo apt-get install libssl-dev mold
 
       - name: Build executable
