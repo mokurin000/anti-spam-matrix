@@ -97,7 +97,7 @@ async fn main() -> Result<()> {
 async fn build_client(config: &Config, auth_path: &PathBuf) -> Result<Client> {
     let userid: &UserId = config.username.as_str().try_into()?;
     let mut client = matrix_sdk::Client::builder().server_name(userid.server_name());
-    if let Some(proxy) = &config.http_proxy {
+    if let Some(proxy) = &config.proxy {
         client = client.proxy(proxy);
     }
     let client = client.build().await?;

@@ -8,7 +8,7 @@ pub struct Config {
     pub spam_limit: u32,
     pub spam_regex_exprs: Vec<String>,
 
-    pub http_proxy: Option<String>,
+    pub proxy: Option<String>,
 }
 
 #[derive(Deserialize, Default, Serialize)]
@@ -30,7 +30,7 @@ impl Default for Config {
             },
             spam_limit: 3,
             spam_regex_exprs: vec![],
-            http_proxy: None,
+            proxy: None,
         }
     }
 }
