@@ -14,5 +14,5 @@ target/
 
 /target
 
-config.toml
+/config.toml
 auth.json

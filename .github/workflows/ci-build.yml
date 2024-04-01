@@ -62,7 +62,7 @@ jobs:
         run: |
             sudo apt-get update
             sudo apt-get upgrade
-            sudo apt-get install libssl-dev
+            sudo apt-get install libssl-dev mold
 
       - name: Build executable
         run: cargo build --release --target ${{ matrix.target }}
