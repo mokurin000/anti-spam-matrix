@@ -15,7 +15,9 @@ use matrix_sdk::{
 };
 use regex::RegexSet;
 use std::{
-    fs, process,
+    fs,
+    path::PathBuf,
+    process,
     sync::{atomic::AtomicUsize, Arc},
 };
 
@@ -23,12 +25,15 @@ use anyhow::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let config_path = directories::BaseDirs::new()
-        .map(|b| b.config_dir().to_owned().join("config.toml"))
-        .unwrap_or("config.toml".into());
+    let project_dir = directories::ProjectDirs::from("io", "poly000", "anti-spam-bot")
+        .map(|d| d.config_dir().to_owned())
+        .unwrap_or_else(|| PathBuf::from("."));
+    let config_path = project_dir.join("config.toml");
+    let auth_path = project_dir.join("auth.json");
+
     if fs::File::open(&config_path).is_err() {
         println!("'config.toml' not exists, generating template...");
-        fs::write("config.toml", toml::to_string_pretty(&Config::default())?)?;
+        fs::write(&config_path, toml::to_string_pretty(&Config::default())?)?;
         println!(
             "successfully generated at {}.",
             config_path.as_os_str().to_string_lossy()
@@ -38,7 +43,7 @@ async fn main() -> Result<()> {
     let config: Arc<Config> = Arc::new(toml::from_str(&fs::read_to_string(config_path)?)?);
     let spam_count_map: Arc<SkipMap<String, AtomicUsize>> = Arc::new(SkipMap::new());
 
-    let client = Arc::new(build_client(&config).await?);
+    let client = Arc::new(build_client(&config, &auth_path).await?);
 
     let _client = client.clone();
     let regex_set = RegexSet::new(&config.spam_regex_exprs)?;
@@ -88,7 +93,7 @@ async fn main() -> Result<()> {
     Ok(())
 }
 
-async fn build_client(config: &Config) -> Result<Client> {
+async fn build_client(config: &Config, auth_path: &PathBuf) -> Result<Client> {
     let userid: &UserId = config.username.as_str().try_into()?;
     let mut client = matrix_sdk::Client::builder().server_name(userid.server_name());
     if let Some(proxy) = &config.http_proxy {
@@ -104,17 +109,14 @@ async fn build_client(config: &Config) -> Result<Client> {
                 .await?;
         }
         config::Auth::SSO => {
-            sso_login(&client).await?;
+            sso_login(&client, &auth_path).await?;
         }
     }
 
     Ok(client)
 }
 
-async fn sso_login(client: &Client) -> Result<()> {
-    let auth_path = directories::BaseDirs::new()
-        .map(|b| b.config_dir().to_owned().join("auth.json"))
-        .unwrap_or_else(|| "auth.json".into());
+async fn sso_login(client: &Client, auth_path: &PathBuf) -> Result<()> {
     if let Ok(auth) = fs::read_to_string(&auth_path) {
         let session: MatrixSession = serde_json::from_str(&auth)?;
         if client.restore_session(session).await.is_ok() {
