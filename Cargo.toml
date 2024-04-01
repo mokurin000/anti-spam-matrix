@@ -25,6 +25,13 @@ regex = "1.10.4"
 open = "5.1.2"
 directories = "5.0.1"
 
+tracing = "0.1.40"
+tracing-subscriber = { version = "0.3.18", features = [
+    "env-filter",
+    "fmt",
+    "smallvec",
+], default-features = false }
+
 [features]
 default = ["native-tls", "socks"]
 native-tls = ["matrix-sdk/native-tls"]

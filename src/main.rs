@@ -3,7 +3,13 @@ use config::Config;
 mod auth;
 use auth::{password_login, sso_login};
 mod utils;
-use utils::ban_user_in_room;
+use utils::{ban_user_in_room, init_dirs};
+
+use std::{
+    fs,
+    path::PathBuf,
+    sync::{atomic::AtomicUsize, Arc},
+};
 
 use crossbeam_skiplist::SkipMap;
 use matrix_sdk::{
@@ -17,33 +23,16 @@ use matrix_sdk::{
     Client,
 };
 use regex::RegexSet;
-use std::{
-    fs,
-    path::PathBuf,
-    process,
-    sync::{atomic::AtomicUsize, Arc},
-};
+use tracing_subscriber::EnvFilter;
 
 use anyhow::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    let project_dir = directories::ProjectDirs::from("io", "poly000", PACKAGE_NAME)
-        .map(|d| d.config_dir().to_owned())
-        .unwrap_or_else(|| PathBuf::from("."));
-    fs::create_dir_all(&project_dir)?;
-    let config_path = project_dir.join("config.toml");
-    let auth_path = project_dir.join("auth.json");
-
-    if fs::File::open(&config_path).is_err() {
-        println!("'config.toml' not exists, generating template...");
-        fs::write(&config_path, toml::to_string_pretty(&Config::default())?)?;
-        println!(
-            "successfully generated at {}.",
-            config_path.as_os_str().to_string_lossy()
-        );
-        process::exit(1);
-    }
+    tracing_subscriber::fmt()
+        .with_env_filter(EnvFilter::from_default_env())
+        .init();
+    let (config_path, auth_path) = init_dirs()?;
     let config: Arc<Config> = Arc::new(toml::from_str(&fs::read_to_string(config_path)?)?);
     let spam_count_map: Arc<SkipMap<String, AtomicUsize>> = Arc::new(SkipMap::new());
 
