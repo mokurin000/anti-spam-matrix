@@ -23,6 +23,7 @@ toml = "0.8.12"
 
 regex = "1.10.4"
 open = "5.1.2"
+directories = "5.0.1"
 
 [features]
 default = ["native-tls", "socks"]

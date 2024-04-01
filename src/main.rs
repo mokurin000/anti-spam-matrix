@@ -23,12 +23,19 @@ use anyhow::Result;
 
 #[tokio::main]
 async fn main() -> Result<()> {
-    if fs::File::open("config.toml").is_err() {
+    let config_path = directories::BaseDirs::new()
+        .map(|b| b.config_dir().to_owned().join("config.toml"))
+        .unwrap_or("config.toml".into());
+    if fs::File::open(&config_path).is_err() {
         println!("'config.toml' not exists, generating template...");
         fs::write("config.toml", toml::to_string_pretty(&Config::default())?)?;
+        println!(
+            "successfully generated at {}.",
+            config_path.as_os_str().to_string_lossy()
+        );
         process::exit(1);
     }
-    let config: Arc<Config> = Arc::new(toml::from_str(&fs::read_to_string("config.toml")?)?);
+    let config: Arc<Config> = Arc::new(toml::from_str(&fs::read_to_string(config_path)?)?);
     let spam_count_map: Arc<SkipMap<String, AtomicUsize>> = Arc::new(SkipMap::new());
 
     let client = Arc::new(build_client(&config).await?);
@@ -105,7 +112,10 @@ async fn build_client(config: &Config) -> Result<Client> {
 }
 
 async fn sso_login(client: &Client) -> Result<()> {
-    if let Ok(auth) = fs::read_to_string("auth.json") {
+    let auth_path = directories::BaseDirs::new()
+        .map(|b| b.config_dir().to_owned().join("auth.json"))
+        .unwrap_or_else(|| "auth.json".into());
+    if let Ok(auth) = fs::read_to_string(&auth_path) {
         let session: MatrixSession = serde_json::from_str(&auth)?;
         if client.restore_session(session).await.is_ok() {
             return Ok(());
@@ -133,7 +143,7 @@ async fn sso_login(client: &Client) -> Result<()> {
             refresh_token: auth_resp.refresh_token,
         },
     };
-    fs::write("auth.json", serde_json::to_string_pretty(&session)?)?;
+    fs::write(&auth_path, serde_json::to_string_pretty(&session)?)?;
     Ok(())
 }
 
