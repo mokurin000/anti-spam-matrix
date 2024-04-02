@@ -8,7 +8,10 @@ use utils::{ban_user_in_room, init_dirs};
 use std::{
     fs,
     path::PathBuf,
-    sync::{atomic::AtomicUsize, Arc},
+    sync::{
+        atomic::{AtomicUsize, Ordering},
+        Arc,
+    },
 };
 
 use crossbeam_skiplist::SkipMap;
@@ -54,22 +57,15 @@ async fn main() -> Result<()> {
         }
 
         let body = content.msgtype.body();
-        let count_entity = spam_count_map.get_or_insert(sender.to_string(), AtomicUsize::new(0));
+        let count_entity =
+            spam_count_map.get_or_insert(sender.to_string(), AtomicUsize::new(0));
         if regex_set.is_match(body) {
-            count_entity
-                .value()
-                .fetch_add(1, std::sync::atomic::Ordering::AcqRel);
+            count_entity.value().fetch_add(1, Ordering::AcqRel);
         } else {
-            count_entity
-                .value()
-                .store(0, std::sync::atomic::Ordering::Release);
+            count_entity.value().store(0, Ordering::Release);
         }
 
-        if count_entity
-            .value()
-            .load(std::sync::atomic::Ordering::Acquire)
-            >= config.spam_limit as _
-        {
+        if count_entity.value().load(Ordering::Acquire) >= config.spam_limit as _ {
             for room in _client.joined_rooms() {
                 ban_user_in_room(&room, &sender).await;
             }
