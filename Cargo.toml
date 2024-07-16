@@ -22,7 +22,7 @@ serde_json = "1"
 toml = "0.8.14"
 
 regex = "1.10.5"
-open = "5.1.4"
+open = "5.3.0"
 directories = "5.0.1"
 
 tracing = "0.1.40"
