@@ -21,7 +21,7 @@ serde = { version = "1.0.210", features = ["derive", "alloc"] }
 serde_json = "1"
 toml = "0.8.19"
 
-regex = "1.10.6"
+regex = "1.11.0"
 open = "5.3.0"
 directories = "5.0.1"
 
