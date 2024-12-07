@@ -10,6 +10,23 @@ If a user triggers the keyword in numerous (the spam_limit) consecutive messages
 
 The bot will ban the spammer in all rooms where it has permissions.
 
+## Build
+
+To get an regular build:
+
+```bash
+cargo build --release
+```
+
+To get a statically-linked build:
+
+```bash
+cargo build --release --no-default-features \
+    -F eyra-as-std \
+    -F rustls-tls \
+    -F socks
+```
+
 ## Usage
 
 ### Authorization
