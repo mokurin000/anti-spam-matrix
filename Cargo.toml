@@ -32,12 +32,16 @@ tracing-subscriber = { version = "0.3.19", features = [
     "smallvec",
 ], default-features = false }
 
+std = { version = "0.19.1", package = "eyra", optional = true }
+
 [features]
 default = ["native-tls", "socks"]
 native-tls = ["matrix-sdk/native-tls"]
 rustls-tls = ["matrix-sdk/rustls-tls"]
 # required to support socks5 proxy
 socks = ["matrix-sdk/socks"]
+
+eyra-as-std = ["dep:std"]
 
 [profile.release]
 panic = "abort"
