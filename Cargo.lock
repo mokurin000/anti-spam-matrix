@@ -222,7 +222,7 @@ dependencies = [
  "serde_urlencoded",
  "sync_wrapper 1.0.2",
  "tokio",
- "tower 0.5.1",
+ "tower",
  "tower-layer",
  "tower-service",
  "tracing",
@@ -648,9 +648,9 @@ dependencies = [
 
 [[package]]
 name = "deadpool-sqlite"
-version = "0.8.1"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "2f9cc6210316f8b7ced394e2a5d2833ce7097fb28afb5881299c61bc18e8e0e9"
+checksum = "656f14fc1ab819c65f332045ea7cb38841bbe551f3b2bc7e3abefb559af4155c"
 dependencies = [
  "deadpool",
  "deadpool-sync",
@@ -828,6 +828,9 @@ checksum = "d93bd0ebf93d61d6332d3c09a96e97975968a44e19a64c947bde06e6baff383f"
 dependencies = [
  "futures-core",
  "readlock",
+ "readlock-tokio",
+ "tokio",
+ "tokio-util",
  "tracing",
 ]
 
@@ -1486,15 +1489,6 @@ dependencies = [
 
 [[package]]
 name = "itertools"
-version = "0.12.1"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ba291022dbbd398a455acf126c1e341954079855bc60dfdda641363bd6922569"
-dependencies = [
- "either",
-]
-
-[[package]]
-name = "itertools"
 version = "0.13.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "413ee7dfc52ee1a4949ceeb7dbc8a33f2d6c088194d9f922fb8318faf1f01186"
@@ -1586,9 +1580,9 @@ dependencies = [
 
 [[package]]
 name = "libsqlite3-sys"
-version = "0.28.0"
+version = "0.30.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "0c10584274047cb335c23d3e61bcef8e323adae7c5c8c760540f73610177fc3f"
+checksum = "2e99fb7a497b1e3339bc746195567ed8d3e24945ecd636e3619d20b9de9e9149"
 dependencies = [
  "pkg-config",
  "vcpkg",
@@ -1715,9 +1709,9 @@ dependencies = [
 
 [[package]]
 name = "matrix-sdk"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e5e2b229a3076e8b36ca3508e79efb6892a4ea841699504ff74fb59910c7d2d0"
+checksum = "cf5a99e79362e6d806d5b0102b8c58dca1f013a50f2f4bc5ffad1cb8dd6fcf43"
 dependencies = [
  "anyhow",
  "anymap2",
@@ -1747,6 +1741,7 @@ dependencies = [
  "matrix-sdk-sqlite",
  "mime",
  "mime2ext",
+ "once_cell",
  "pin-project-lite",
  "rand",
  "reqwest",
@@ -1755,11 +1750,11 @@ dependencies = [
  "serde_html_form",
  "serde_json",
  "tempfile",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "tokio",
  "tokio-stream",
  "tokio-util",
- "tower 0.4.13",
+ "tower",
  "tracing",
  "url",
  "urlencoding",
@@ -1769,9 +1764,9 @@ dependencies = [
 
 [[package]]
 name = "matrix-sdk-base"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "126ede42ff624f934408005d4d3a641a505a101997a359f85029ae9b8a5b3ab2"
+checksum = "6720c7df74eb1d4804af9d402cf56ba43873ae62f19b81857e96da6532e12e1a"
 dependencies = [
  "as_variant",
  "async-trait",
@@ -1789,7 +1784,7 @@ dependencies = [
  "ruma",
  "serde",
  "serde_json",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "tokio",
  "tracing",
  "unicode-normalization",
@@ -1797,9 +1792,9 @@ dependencies = [
 
 [[package]]
 name = "matrix-sdk-common"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1c355b0413586375441d67eb1682445a4bef8ebb127cf12bce0a7ed2741add75"
+checksum = "3ee4c56343d78cef759a0398b35bb192e508f203b3d697abe5a09dfcf17ff440"
 dependencies = [
  "async-trait",
  "eyeball-im",
@@ -1810,7 +1805,7 @@ dependencies = [
  "ruma",
  "serde",
  "serde_json",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "tokio",
  "tracing",
  "tracing-subscriber",
@@ -1821,11 +1816,12 @@ dependencies = [
 
 [[package]]
 name = "matrix-sdk-crypto"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e45967fe90a6f20e8426178224fff6f731c0737367821d6a39ae40baf91e8e85"
+checksum = "7395a7ee99668e7ce63643f1cee8abc11a05c60ab953bd298e762c3356f9aef0"
 dependencies = [
  "aes",
+ "aquamarine",
  "as_variant",
  "async-trait",
  "bs58",
@@ -1837,7 +1833,7 @@ dependencies = [
  "futures-util",
  "hkdf",
  "hmac",
- "itertools 0.12.1",
+ "itertools 0.13.0",
  "js_option",
  "matrix-sdk-common",
  "pbkdf2",
@@ -1848,7 +1844,7 @@ dependencies = [
  "serde_json",
  "sha2",
  "subtle",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "time",
  "tokio",
  "tokio-stream",
@@ -1861,9 +1857,9 @@ dependencies = [
 
 [[package]]
 name = "matrix-sdk-indexeddb"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "aa3c1b0ab6b9c97a675594e4f8b8959d37ac417dbd62bfdb2ab676512ae9a5f0"
+checksum = "72f86434be7e6256a5d6e7828b887a4e91a42cd66380f8b02e02eeb702819589"
 dependencies = [
  "anyhow",
  "async-trait",
@@ -1880,7 +1876,7 @@ dependencies = [
  "serde-wasm-bindgen",
  "serde_json",
  "sha2",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "tokio",
  "tracing",
  "wasm-bindgen",
@@ -1890,13 +1886,13 @@ dependencies = [
 
 [[package]]
 name = "matrix-sdk-sqlite"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "45c3c864379aab89141f728fd06a1334bbafd67ff089fa3d74314764db474b97"
+checksum = "eec5d5bf5de2de1874caba8c97ca7c1e9c7b3b50aba22fac0067f03bfa2416bf"
 dependencies = [
  "async-trait",
  "deadpool-sqlite",
- "itertools 0.12.1",
+ "itertools 0.13.0",
  "matrix-sdk-crypto",
  "matrix-sdk-store-encryption",
  "rmp-serde",
@@ -1904,7 +1900,7 @@ dependencies = [
  "rusqlite",
  "serde",
  "serde_json",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "tokio",
  "tracing",
  "vodozemac",
@@ -1912,9 +1908,9 @@ dependencies = [
 
 [[package]]
 name = "matrix-sdk-store-encryption"
-version = "0.8.0"
+version = "0.9.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "9d05c000fdbbf42849ed10422349e1554b477a77b8d7183d28156bd99e124c8d"
+checksum = "d702add6a56f288bf2e1a4e45145529620bff2003e746d7f23fc736ea806dbc8"
 dependencies = [
  "base64",
  "blake3",
@@ -1926,7 +1922,7 @@ dependencies = [
  "serde",
  "serde_json",
  "sha2",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "zeroize",
 ]
 
@@ -2174,26 +2170,6 @@ name = "percent-encoding"
 version = "2.3.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "e3148f5046208a5d56bcfc03053e3ca6334e51da8dfb19b6cdc8b306fae3283e"
-
-[[package]]
-name = "pin-project"
-version = "1.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be57f64e946e500c8ee36ef6331845d40a93055567ec57e8fae13efd33759b95"
-dependencies = [
- "pin-project-internal",
-]
-
-[[package]]
-name = "pin-project-internal"
-version = "1.1.7"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "3c0f5fad0874fc7abcd4d750e76917eaebbecaa2c20bde22e1dbeeba8beb758c"
-dependencies = [
- "proc-macro2",
- "quote",
- "syn",
-]
 
 [[package]]
 name = "pin-project-lite"
@@ -2445,6 +2421,15 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "072cfe5b1d2dcd38d20e18f85e9c9978b6cc08f0b373e9f1fff1541335622974"
 
 [[package]]
+name = "readlock-tokio"
+version = "0.1.3"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "867fac64d07214a87e5cf4e88b4ce855844a1cea243534392377d1ac2c911653"
+dependencies = [
+ "tokio",
+]
+
+[[package]]
 name = "realpath-ext"
 version = "0.1.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -2597,9 +2582,9 @@ dependencies = [
 
 [[package]]
 name = "ruma"
-version = "0.11.1"
+version = "0.12.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "e94984418ae8a5e1160e6c87608141330e9ae26330abf22e3d15416efa96d48a"
+checksum = "f5100fcaf13d18b9c5c2dfdee5632c428e3201b04ddefd82c930953b461d000a"
 dependencies = [
  "assign",
  "js_int",
@@ -2613,9 +2598,9 @@ dependencies = [
 
 [[package]]
 name = "ruma-client-api"
-version = "0.19.0"
+version = "0.20.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "325e054db8d5545c00767d9868356d61e63f2c6cb8b54768346d66696ea4ad48"
+checksum = "25f5929f675a96adb22dcfbab1c527862d7f92a6346a280f2ddcfc6380b19391"
 dependencies = [
  "as_variant",
  "assign",
@@ -2630,16 +2615,16 @@ dependencies = [
  "serde",
  "serde_html_form",
  "serde_json",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "url",
  "web-time",
 ]
 
 [[package]]
 name = "ruma-common"
-version = "0.14.1"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "ad71c7f49abaa047ba228339d34f9aaefa4d8b50ebeb8e859d0340cc2138bda8"
+checksum = "6c537899b20312655aa9bf4cd825aaf00dd13203f215df2007bc4fbbeac8d8ba"
 dependencies = [
  "as_variant",
  "base64",
@@ -2659,7 +2644,7 @@ dependencies = [
  "serde",
  "serde_html_form",
  "serde_json",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "time",
  "tracing",
  "url",
@@ -2670,9 +2655,9 @@ dependencies = [
 
 [[package]]
 name = "ruma-events"
-version = "0.29.1"
+version = "0.30.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "be86dccf3504588c1f4dc1bda4ce1f8bbd646fc6dda40c77cc7de6e203e62dad"
+checksum = "34e4f72eb598c62f51a199bd9218f3fc36a5d50361ecc7a30d864df7bfcef220"
 dependencies = [
  "as_variant",
  "indexmap",
@@ -2685,7 +2670,7 @@ dependencies = [
  "ruma-macros",
  "serde",
  "serde_json",
- "thiserror 1.0.69",
+ "thiserror 2.0.5",
  "tracing",
  "url",
  "web-time",
@@ -2694,9 +2679,9 @@ dependencies = [
 
 [[package]]
 name = "ruma-federation-api"
-version = "0.10.0"
+version = "0.11.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "1b5a09ac22b3352bf7a350514dc9a87e1b56aba04c326ac9ce142740f7218afa"
+checksum = "5d70c3d37a8e42992aeaa5786cb406ad302bcd05c0e7e3073d5316b4574340dd"
 dependencies = [
  "http",
  "js_int",
@@ -2719,12 +2704,11 @@ dependencies = [
 
 [[package]]
 name = "ruma-macros"
-version = "0.14.0"
+version = "0.15.0"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "c8d57d3cb20e8e758e8f7c5e408ce831d46758003b615100099852e468631934"
+checksum = "ff7bc55ea278668253c9898dd905325bf1f72df4bf2abddd04ff1c99b7b3c4fb"
 dependencies = [
  "cfg-if",
- "once_cell",
  "proc-macro-crate",
  "proc-macro2",
  "quote",
@@ -2736,9 +2720,9 @@ dependencies = [
 
 [[package]]
 name = "rusqlite"
-version = "0.31.0"
+version = "0.32.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b838eba278d213a8beaf485bd313fd580ca4505a00d5871caeb1457c55322cae"
+checksum = "7753b721174eb8ff87a9a0e799e2d7bc3749323e773db92e0984debb00019d6e"
 dependencies = [
  "bitflags 2.6.0",
  "fallible-iterator",
@@ -3372,21 +3356,6 @@ dependencies = [
  "serde_spanned",
  "toml_datetime",
  "winnow",
-]
-
-[[package]]
-name = "tower"
-version = "0.4.13"
-source = "registry+https://github.com/rust-lang/crates.io-index"
-checksum = "b8fa9be0de6cf49e536ce1851f987bd21a43b771b09473c3549a6c853db37c1c"
-dependencies = [
- "futures-core",
- "futures-util",
- "pin-project",
- "pin-project-lite",
- "tower-layer",
- "tower-service",
- "tracing",
 ]
 
 [[package]]
