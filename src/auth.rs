@@ -3,9 +3,7 @@ use std::{fs, path::PathBuf};
 
 use anyhow::Result;
 use matrix_sdk::{
-    matrix_auth::{MatrixSession, MatrixSessionTokens},
-    ruma::UserId,
-    Client, SessionMeta,
+    authentication::matrix::MatrixSession, ruma::UserId, Client, SessionMeta, SessionTokens,
 };
 
 pub async fn password_login(
@@ -46,7 +44,7 @@ pub async fn sso_login(client: &Client, auth_path: &PathBuf) -> Result<()> {
             user_id: auth_resp.user_id,
             device_id: auth_resp.device_id,
         },
-        tokens: MatrixSessionTokens {
+        tokens: SessionTokens {
             access_token: auth_resp.access_token,
             refresh_token: auth_resp.refresh_token,
         },
