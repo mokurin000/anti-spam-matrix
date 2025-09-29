@@ -20,7 +20,7 @@ serde = { version = "1.0.226", features = ["derive", "alloc"] }
 serde_json = "1"
 toml = "0.9.7"
 
-regex = "1.11.2"
+regex = "1.11.3"
 open = "5.3.2"
 directories = "6.0.0"
 
