@@ -24,7 +24,7 @@ regex = "1.12.2"
 open = "5.3.3"
 directories = "6.0.0"
 
-tracing = "0.1.43"
+tracing = "0.1.44"
 tracing-subscriber = { version = "0.3.22", features = [
     "env-filter",
     "fmt",
