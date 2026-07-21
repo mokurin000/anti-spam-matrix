@@ -1,24 +1,23 @@
 # anti-spam-matrix
 
-This is a simple Matrix spam banning bot.
+A simple Matrix spam moderation bot.
 
-Its logic is currently straightforward:
+The current detection logic is intentionally straightforward:
 
-If a user triggers the specified keyword in a certain number of consecutive messages, they will be banned.
+* If a user sends a specified keyword in a configured number of **consecutive messages**, they will be banned.
+* If a user triggers the keyword in **consecutive messages across multiple rooms** (reaching the configured `spam_limit`), they will also be banned.
 
-If a user triggers the keyword in numerous (the spam_limit) consecutive messages in different groups, they will also be banned.
+Once a user is identified as a spammer, the bot will ban them from **every room where it has sufficient permissions**.
 
-The bot will ban the spammer in all rooms where it has permissions.
+## Building
 
-## Build
-
-To get an regular build:
+To create a standard release build:
 
 ```bash
 cargo build --release
 ```
 
-To get a statically-linked build:
+To create a statically linked build:
 
 ```bash
 cargo build --release --no-default-features \
@@ -27,11 +26,13 @@ cargo build --release --no-default-features \
     -F socks
 ```
 
-## Usage
+## Configuration
 
-### Authorization
+### Authentication
 
-Currently we support two authurization methods, `sso` and `password`
+The bot currently supports two authentication methods: `password` and `sso_login`.
+
+**Password authentication:**
 
 ```toml
 [auth]
@@ -39,19 +40,26 @@ type = "password"
 password = "VeryHardPassword"
 ```
 
-> Note: In SSO login, username part of the userid will be ignored.
+> [!NOTE]
+> When using SSO authentication, the username portion of the Matrix user ID is ignored.
+
+**SSO authentication:**
 
 ```toml
 [auth]
 type = "sso_login"
 ```
 
-### Setup a proxy
+### Proxy
+
+SOCKS5 proxy:
 
 ```toml
 proxy = "socks5://114.51.41.191:9810"
 ```
-or
+
+HTTP proxy with authentication:
+
 ```toml
 proxy = "http://name:passwd@114.51.41.191:9810"
 ```
